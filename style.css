@@ -51,6 +51,15 @@ header .io .btn {
 #manual-slots label { font-size: .75em; text-align: center; }
 #manual-slots input { padding: .3rem; text-align: center; }
 
+#resources-list { margin-top: .5rem; }
+#resources-list .resource-row { display: grid; grid-template-columns: 1fr auto auto auto auto; gap: .35rem; align-items: center; margin-bottom: .4rem; }
+#resources-list .resource-row input { padding: .35rem; }
+#resources-list .resource-row .btn-sm { padding: .25rem .45rem; font-size: .8em; border: 1px solid #ccc; background: #f8f8f8; border-radius: 3px; cursor: pointer; }
+#resources-list .resource-row .btn-sm:hover { background: #eee; }
+#resources-list .resource-row .btn-remove { color: #8b0000; border-color: #8b0000; }
+.resource-actions { display: flex; gap: .75rem; align-items: center; margin-top: .35rem; }
+.resource-actions label.inline { display: flex; gap: .4rem; align-items: center; font-size: .85em; color: #555; }
+
 button { cursor: pointer; }
 button.primary { background: #8b0000; color: white; border: none; padding: .55rem 1rem; border-radius: 4px; font: inherit; }
 button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; padding: .55rem 1rem; border-radius: 4px; font: inherit; }

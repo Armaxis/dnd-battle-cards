@@ -30,10 +30,23 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      state.characters = d.characters || [];
+      state.characters = (d.characters || []).map(migrateChar);
       state.battleName = d.battleName || '';
     }
   } catch {}
+}
+
+function migrateChar(c) {
+  if (Array.isArray(c.resources)) return c;
+  if (c.resourceName && c.resourceName.trim()) {
+    c.resources = [{ name: c.resourceName, count: c.resourceCount || 0 }];
+  } else {
+    const preset = resourceForLevel(c.class, c.level);
+    c.resources = preset ? [{ name: preset.name, count: preset.count === '∞' ? 99 : (preset.count || 0) }] : [];
+  }
+  delete c.resourceName;
+  delete c.resourceCount;
+  return c;
 }
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -98,7 +111,7 @@ document.getElementById('new-char').onclick = () => {
     ac: 10, hp: 8, speed: 30,
     saves: '', resist: '', spellSave: '',
     autoSlots: true, slots: null,
-    autoResource: true, resourceName: '', resourceCount: 0,
+    autoResource: true, resources: [],
   };
   state.characters.push(c);
   state.selectedId = c.id;
@@ -122,13 +135,21 @@ function bindForm() {
   classSel.onchange = refreshAuto;
   levelInput.oninput = refreshAuto;
   autoSlots.onchange = refreshAuto;
-  autoResource.onchange = updateResourceField;
+  autoResource.onchange = () => { updateResourceField(); renderResourceList(); };
+
+  document.getElementById('add-resource').onclick = () => {
+    const c = state.characters.find(x => x.id === state.selectedId);
+    if (!c) return;
+    c.resources.push({ name: '', count: 0 });
+    renderResourceList();
+  };
 
   form.onsubmit = (e) => {
     e.preventDefault();
     const c = state.characters.find(x => x.id === state.selectedId);
     if (!c) return;
     const fd = new FormData(form);
+    c.resources = collectResources();
     Object.assign(c, {
       name: fd.get('name'),
       class: fd.get('class'),
@@ -141,8 +162,6 @@ function bindForm() {
       spellSave: fd.get('spellSave'),
       autoSlots: form.autoSlots.checked,
       autoResource: form.autoResource.checked,
-      resourceName: fd.get('resourceName'),
-      resourceCount: +fd.get('resourceCount') || 0,
     });
     if (!c.autoSlots) {
       c.slots = [];
@@ -164,6 +183,49 @@ function bindForm() {
   };
 }
 
+function collectResources() {
+  const list = document.getElementById('resources-list');
+  const rows = list.querySelectorAll('.resource-row');
+  const res = [];
+  rows.forEach(row => {
+    const name = row.querySelector('.res-name-input').value.trim();
+    const count = +row.querySelector('.res-count-input').value || 0;
+    if (name) res.push({ name, count });
+  });
+  return res;
+}
+
+function renderResourceList() {
+  const host = document.getElementById('resources-list');
+  const c = state.characters.find(x => x.id === state.selectedId);
+  if (!c) return;
+  const form = document.getElementById('char-form');
+  const auto = form.autoResource.checked;
+  host.innerHTML = c.resources.map((r, i) => `
+    <div class="resource-row" data-idx="${i}">
+      <input class="res-name-input" placeholder="Resource name" value="${escapeHtml(r.name)}" ${auto ? 'disabled' : ''}>
+      <input class="res-count-input" type="number" min="0" value="${r.count}" style="width:55px" ${auto ? 'disabled' : ''}>
+      <button class="btn-sm" type="button" data-action="up" ${i === 0 ? 'disabled' : ''}>▲</button>
+      <button class="btn-sm" type="button" data-action="down" ${i === c.resources.length - 1 ? 'disabled' : ''}>▼</button>
+      <button class="btn-sm btn-remove" type="button" data-action="remove">✕</button>
+    </div>
+  `).join('');
+  host.querySelectorAll('.btn-sm').forEach(btn => {
+    btn.onclick = () => {
+      const idx = +btn.closest('.resource-row').dataset.idx;
+      const action = btn.dataset.action;
+      if (action === 'up' && idx > 0) {
+        [c.resources[idx], c.resources[idx - 1]] = [c.resources[idx - 1], c.resources[idx]];
+      } else if (action === 'down' && idx < c.resources.length - 1) {
+        [c.resources[idx], c.resources[idx + 1]] = [c.resources[idx + 1], c.resources[idx]];
+      } else if (action === 'remove') {
+        c.resources.splice(idx, 1);
+      }
+      renderResourceList();
+    };
+  });
+}
+
 function fillForm(c) {
   if (!c) return;
   const form = document.getElementById('char-form');
@@ -178,10 +240,10 @@ function fillForm(c) {
   form.spellSave.value = c.spellSave || '';
   form.autoSlots.checked = c.autoSlots !== false;
   form.autoResource.checked = c.autoResource !== false;
-  form.resourceName.value = c.resourceName || '';
-  form.resourceCount.value = c.resourceCount || 0;
+  if (!Array.isArray(c.resources)) c.resources = [];
   renderManualSlots(form.autoSlots.checked);
   updateResourceField();
+  renderResourceList();
 }
 
 function renderManualSlots(auto) {
@@ -201,12 +263,20 @@ function updateResourceField() {
   const form = document.getElementById('char-form');
   const cls = form.class.value;
   const lvl = +form.level.value || 1;
+  const c = state.characters.find(x => x.id === state.selectedId);
   const preset = resourceForLevel(cls, lvl);
   const field = document.getElementById('resource-field');
-  field.hidden = !preset;
-  if (preset) {
-    form.resourceName.value = preset.name;
-    form.resourceCount.value = preset.count === '∞' ? 99 : (preset.count || 0);
+  field.hidden = false;
+  if (preset && form.autoResource.checked && c) {
+    if (!Array.isArray(c.resources)) c.resources = [];
+    const presetObj = { name: preset.name, count: preset.count === '∞' ? 99 : (preset.count || 0) };
+    if (c.resources.length === 0) {
+      c.resources.push(presetObj);
+    } else if (!c.resources[0].name || c.resources[0].name.toLowerCase() === preset.name.toLowerCase()) {
+      c.resources[0] = presetObj;
+    } else {
+      c.resources[0].count = presetObj.count;
+    }
   }
 }
 
@@ -260,11 +330,13 @@ function renderCard(c) {
     n > 0 ? `<span class="slot-group"><span class="lvl">Level ${i+1}</span>${bubbles(n)}</span>` : ''
   ).filter(Boolean).join('');
 
-  const resCount = c.resourceCount;
-  const resHtml = c.resourceName && resCount > 0
-    ? `<div class="line"></div><div class="resource-row"><span class="res-name">${escapeHtml(c.resourceName)}:</span>${
-        resCount >= 20 ? `<span>∞</span>` : bubbles(Math.min(resCount, 12))
-      }</div>` : '';
+  const resources = c.resources || [];
+  const resHtml = resources.filter(r => r.name && r.count > 0).map(r => {
+    const count = r.count;
+    return `<div class="line"></div><div class="resource-row"><span class="res-name">${escapeHtml(r.name)}:</span>${
+      count >= 20 ? `<span>∞</span>` : bubbles(Math.min(count, 12))
+    }</div>`;
+  }).join('');
 
   return `
     <div class="card">

@@ -46,12 +46,12 @@
     </fieldset>
 
     <fieldset id="resource-field" hidden>
-      <legend>Class Resource</legend>
-      <div class="row">
-        <label>Name <input name="resourceName"></label>
-        <label>Count <input name="resourceCount" type="number" min="0"></label>
+      <legend>Class Resources</legend>
+      <div id="resources-list"></div>
+      <div class="resource-actions">
+        <button type="button" id="add-resource">+ Add Resource</button>
+        <label class="inline"><input type="checkbox" name="autoResource" checked> Auto-fill from level</label>
       </div>
-      <label class="inline"><input type="checkbox" name="autoResource" checked> Auto-fill from level</label>
     </fieldset>
 
     <div class="actions">
