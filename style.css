@@ -1,0 +1,133 @@
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, system-ui, sans-serif;
+  margin: 0;
+  background: #f4f2ec;
+  color: #222;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .75rem 1rem;
+  background: #2b2b2b;
+  color: #f4f2ec;
+  border-bottom: 3px solid #8b0000;
+}
+header h1 { margin: 0; font-size: 1.1rem; }
+header nav { display: flex; gap: .25rem; }
+header nav button,
+header .io button,
+header .io .btn {
+  background: #444; color: #eee; border: none;
+  padding: .5rem .9rem; cursor: pointer; border-radius: 4px;
+  font: inherit;
+}
+header nav button.active { background: #8b0000; }
+header .io { margin-left: auto; display: flex; gap: .5rem; }
+
+/* ============ TAB LAYOUT ============ */
+.tab { padding: 1rem; display: grid; gap: 1rem; }
+#library { grid-template-columns: 280px 1fr; align-items: start; }
+
+.list-pane ul { list-style: none; padding: 0; margin: 1rem 0 0; }
+.list-pane li {
+  padding: .6rem .8rem; background: #fff; border: 1px solid #ddd;
+  border-radius: 4px; margin-bottom: .3rem; cursor: pointer;
+  display: flex; justify-content: space-between;
+}
+.list-pane li:hover { background: #fffbe6; }
+.list-pane li.selected { border-color: #8b0000; background: #fff3f3; }
+.list-pane li .meta { color: #888; font-size: .85em; }
+
+.form-pane {
+  background: #fff; padding: 1rem; border-radius: 6px;
+  border: 1px solid #ddd; display: grid; gap: .75rem;
+}
+.form-pane label { display: grid; gap: .25rem; font-size: .85em; color: #555; }
+.form-pane label.inline { display: flex; flex-direction: row; gap: .4rem; align-items: center; }
+.form-pane input, .form-pane select {
+  padding: .45rem; border: 1px solid #ccc; border-radius: 4px;
+  font: inherit; background: #fff;
+}
+.form-pane .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.form-pane fieldset { border: 1px solid #ddd; border-radius: 4px; padding: .75rem; }
+.form-pane legend { padding: 0 .4rem; color: #555; font-size: .85em; }
+#manual-slots { display: grid; grid-template-columns: repeat(9, 1fr); gap: .4rem; margin-top: .5rem; }
+#manual-slots label { font-size: .75em; text-align: center; }
+#manual-slots input { padding: .3rem; text-align: center; }
+
+button { cursor: pointer; }
+button.primary { background: #8b0000; color: white; border: none; padding: .55rem 1rem; border-radius: 4px; font: inherit; }
+button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; padding: .55rem 1rem; border-radius: 4px; font: inherit; }
+.actions { display: flex; gap: .5rem; }
+
+.battle-controls { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap; }
+.battle-controls label { display: grid; gap: .25rem; font-size: .85em; }
+.battle-controls input, .battle-controls select { padding: .45rem; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
+.pick-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .5rem; }
+.pick-list label {
+  background: #fff; padding: .6rem .8rem; border: 1px solid #ddd;
+  border-radius: 4px; cursor: pointer; display: flex; gap: .5rem; align-items: center;
+}
+.pick-list label:has(input:checked) { border-color: #8b0000; background: #fff3f3; }
+
+/* ============ PRINTABLE CARDS ============ */
+#print-area { padding: 1rem; }
+#battle-title {
+  text-align: center; font-family: "Georgia", serif;
+  font-size: 1.6rem; margin: 0 0 1rem; letter-spacing: .05em;
+}
+#battle-title:empty { display: none; }
+
+#cards { display: grid; gap: 6mm; }
+.layout-6 #cards { grid-template-columns: repeat(2, 1fr); }
+.layout-4 #cards { grid-template-columns: repeat(2, 1fr); }
+.layout-2 #cards { grid-template-columns: 1fr; }
+
+.card {
+  border: 1.5px solid #222; border-radius: 4px;
+  padding: 3mm 4mm; background: #fff;
+  font-family: "Georgia", serif; font-size: 10pt;
+  display: flex; flex-direction: column; gap: 1.2mm;
+  page-break-inside: avoid;
+}
+.card .name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 2mm; }
+.card .name-row .name { font-weight: bold; font-size: 12pt; }
+.card .name-row .class-lvl { font-size: 8.5pt; color: #666; }
+.card .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1mm; font-size: 9pt; }
+.card .stats .cell { border: 1px solid #bbb; padding: 1mm 2mm; border-radius: 2px; }
+.card .stats .cell .lbl { font-size: 7pt; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+.card .stats .cell .val { font-size: 11pt; font-weight: bold; }
+.card .line { border-top: 1px dashed #999; margin: .5mm 0; }
+.card .kv { font-size: 8.5pt; display: flex; gap: 1mm; }
+.card .kv .k { color: #666; text-transform: uppercase; font-size: 7pt; letter-spacing: .05em; align-self: center; }
+.card .kv .v { flex: 1; border-bottom: 1px solid #ccc; min-height: 4mm; }
+.card .slots { display: flex; flex-wrap: wrap; gap: 1.5mm; font-size: 9pt; }
+.card .slot-group { display: flex; gap: .5mm; align-items: center; }
+.card .slot-group .lvl { font-weight: bold; margin-right: .5mm; }
+.card .bubble { display: inline-block; width: 3mm; height: 3mm; border: 1.2px solid #222; border-radius: 50%; }
+.card .bubble.x { border-radius: 0; transform: rotate(45deg); width: 2.6mm; height: 2.6mm; }
+.card .blank { border-bottom: 1px solid #aaa; flex: 1; min-height: 4mm; }
+.card .notes-block { border: 1px solid #bbb; min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto}
+.card .resource-row { display: flex; gap: 2mm; align-items: center; font-size: 9pt; flex-wrap: wrap; }
+.card .resource-row .res-name { font-weight: bold; }
+.card .bottom-row { display: flex; justify-content: space-between; gap: 2mm; font-size: 8.5pt; }
+.card .death { display: flex; gap: 1mm; align-items: center; }
+.card .death .lbl { font-size: 7pt; color: #666; }
+
+/* ============ PRINT ============ */
+@page { size: letter; margin: 10mm; }
+@media print {
+  body { background: white; }
+  .no-print { display: none !important; }
+  #print-area { padding: 0; }
+  .layout-6 #cards { grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(0, 1fr); }
+  .layout-6 .card { height: 88mm; }
+  .layout-4 .card { height: 130mm; }
+  .layout-2 .card { height: 130mm; }
+}
+
+/* hide print area on screen unless battle tab is active */
+body:not(.show-print) #print-area { display: none; }

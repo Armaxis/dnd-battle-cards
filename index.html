@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>D&D Battle Cards</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="no-print">
+  <h1>⚔ D&amp;D Battle Cards</h1>
+  <nav>
+    <button data-tab="library" class="active">Characters</button>
+    <button data-tab="battle">Print Battle</button>
+  </nav>
+  <div class="io">
+    <button id="export">Export JSON</button>
+    <label class="btn">Import JSON<input type="file" id="import" accept="application/json" hidden></label>
+  </div>
+</header>
+
+<!-- ========== LIBRARY TAB ========== -->
+<section id="library" class="tab no-print">
+  <div class="list-pane">
+    <button id="new-char" class="primary">+ New Character</button>
+    <ul id="char-list"></ul>
+  </div>
+  <form id="char-form" class="form-pane" hidden>
+    <label>Name <input name="name" required></label>
+    <div class="row">
+      <label>Class
+        <select name="class" id="class-select"></select>
+      </label>
+      <label>Level <input name="level" type="number" min="1" max="20" value="1"></label>
+    </div>
+    <div class="row">
+      <label>AC <input name="ac"></label>
+      <label>Max HP <input name="hp" type="number" min="1"></label>
+      <label>Speed <input name="speed" value="30"></label>
+    </div>
+    <label>Resist / Immune / Vulnerable <input name="resist" placeholder="Resist: fire · Immune: poison"></label>
+
+    <fieldset>
+      <legend>Spell Slots</legend>
+      <label class="inline"><input type="checkbox" name="autoSlots" checked> Auto-fill from class &amp; level</label>
+      <div id="manual-slots" hidden></div>
+    </fieldset>
+
+    <fieldset id="resource-field" hidden>
+      <legend>Class Resource</legend>
+      <div class="row">
+        <label>Name <input name="resourceName"></label>
+        <label>Count <input name="resourceCount" type="number" min="0"></label>
+      </div>
+      <label class="inline"><input type="checkbox" name="autoResource" checked> Auto-fill from level</label>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="primary">Save</button>
+      <button type="button" id="delete-char" class="danger">Delete</button>
+      <button type="button" id="cancel-edit">Cancel</button>
+    </div>
+  </form>
+</section>
+
+<!-- ========== BATTLE TAB ========== -->
+<section id="battle" class="tab no-print" hidden>
+  <div class="battle-controls">
+    <label>Battle Name <input id="battle-name" placeholder="Battle of Blackfang Pass"></label>
+    <label>Layout
+      <select id="layout">
+        <option value="6">6-up (3×2)</option>
+        <option value="4">4-up (2×2)</option>
+        <option value="2">2-up (1×2)</option>
+      </select>
+    </label>
+    <button id="print-btn" class="primary">Print</button>
+  </div>
+  <div id="pick-list" class="pick-list"></div>
+</section>
+
+<!-- ========== PRINTABLE OUTPUT ========== -->
+<main id="print-area" class="layout-6">
+  <h2 id="battle-title"></h2>
+  <div id="cards"></div>
+</main>
+
+<script src="classes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
