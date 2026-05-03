@@ -18,6 +18,10 @@ let state = {
   bindBattle();
   bindIO();
   render();
+  if (state.characters.length > 0 && !state.selectedId) {
+    state.selectedId = state.characters[0].id;
+    render();
+  }
 })();
 
 // ---------- persistence ----------
@@ -107,7 +111,7 @@ document.getElementById('new-char').onclick = () => {
     id: crypto.randomUUID(),
     name: '', class: 'Wizard', level: 1,
     ac: 10, hp: 8, speed: 30,
-    saves: '', resist: '',
+    saves: '', resist: '', spellSave: '',
     autoSlots: true, slots: null,
     autoResource: true, resourceName: '', resourceCount: 0,
   };
@@ -148,6 +152,7 @@ function bindForm() {
       speed: +fd.get('speed'),
       saves: fd.get('saves'),
       resist: fd.get('resist'),
+      spellSave: fd.get('spellSave'),
       autoSlots: form.autoSlots.checked,
       autoResource: form.autoResource.checked,
       resourceName: fd.get('resourceName'),
@@ -184,6 +189,7 @@ function fillForm(c) {
   form.hp.value = c.hp || '';
   form.speed.value = c.speed || 30;
   form.resist.value = c.resist || '';
+  form.spellSave.value = c.spellSave || '';
   form.autoSlots.checked = c.autoSlots !== false;
   form.autoResource.checked = c.autoResource !== false;
   form.resourceName.value = c.resourceName || '';
@@ -299,7 +305,7 @@ function renderCard(c) {
         </span>
       </div>
       <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
-      ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div><div class="kv"><span class="k">Concentration</span><span class="v"></span><span class="k">Spell Save</span><span class="v"></span></div>` : ''}
+      ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div><div class="kv"><span class="k">Concentration</span><span class="v"></span><span class="k">Spell Save</span><span class="v">${c.spellSave ?? ''}</span></div>` : ''}
       ${resHtml}
       <div class="notes-block">Notes</div>
     </div>
