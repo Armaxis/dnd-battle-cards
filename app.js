@@ -13,11 +13,11 @@ let state = {
   CLASSES = CLASSES_DATA;
   load();
   buildClassOptions();
-  bindTabs();
   bindForm();
   bindBattle();
   bindIO();
   render();
+  renderBattle();
   if (state.characters.length > 0 && !state.selectedId) {
     state.selectedId = state.characters[0].id;
     render();
@@ -70,21 +70,6 @@ function resourceForLevel(className, level) {
   return { name: res.name, count: v };
 }
 
-// ---------- tabs ----------
-function bindTabs() {
-  document.querySelectorAll('header nav button').forEach(b => {
-    b.onclick = () => {
-      document.querySelectorAll('header nav button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      const tab = b.dataset.tab;
-      document.getElementById('library').hidden = tab !== 'library';
-      document.getElementById('battle').hidden  = tab !== 'battle';
-      document.body.classList.toggle('show-print', tab === 'battle');
-      if (tab === 'battle') renderBattle();
-    };
-  });
-}
-
 // ---------- library ----------
 function render() {
   const list = document.getElementById('char-list');
@@ -117,7 +102,8 @@ document.getElementById('new-char').onclick = () => {
   };
   state.characters.push(c);
   state.selectedId = c.id;
-  save(); render();
+  state.picked.add(c.id);
+  save(); render(); renderBattle();
 };
 
 function bindForm() {
@@ -164,7 +150,7 @@ function bindForm() {
     } else {
       c.slots = null;
     }
-    save(); render();
+    save(); render(); renderBattle();
   };
 
   document.getElementById('cancel-edit').onclick = () => {
@@ -174,7 +160,7 @@ function bindForm() {
     if (!confirm('Delete this character?')) return;
     state.characters = state.characters.filter(c => c.id !== state.selectedId);
     state.selectedId = null;
-    save(); render();
+    save(); render(); renderBattle();
   };
 }
 
@@ -233,10 +219,6 @@ function bindBattle() {
     state.layout = e.target.value;
     document.getElementById('print-area').className = `layout-${state.layout}`;
     renderPrint();
-  };
-  document.getElementById('print-btn').onclick = () => {
-    renderPrint();
-    window.print();
   };
 }
 
@@ -333,7 +315,7 @@ function bindIO() {
         const d = JSON.parse(r.result);
         if (Array.isArray(d.characters)) state.characters = d.characters;
         if (typeof d.battleName === 'string') state.battleName = d.battleName;
-        save(); render();
+        save(); render(); renderBattle();
       } catch { alert('Invalid JSON'); }
     };
     r.readAsText(file);
