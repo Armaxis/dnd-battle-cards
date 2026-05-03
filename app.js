@@ -211,9 +211,11 @@ function updateResourceField() {
   const lvl = +form.level.value || 1;
   const preset = resourceForLevel(cls, lvl);
   const field = document.getElementById('resource-field');
-  field.hidden = !preset;  
-  form.resourceName.value = preset.name;
-  form.resourceCount.value = preset.count === '∞' ? 99 : (preset.count || 0);
+  field.hidden = !preset;
+  if (preset) {
+    form.resourceName.value = preset.name;
+    form.resourceCount.value = preset.count === '∞' ? 99 : (preset.count || 0);
+  }
 }
 
 // ---------- battle tab ----------
@@ -236,7 +238,7 @@ function renderBattle() {
   const host = document.getElementById('pick-list');
   host.innerHTML = state.characters.map(c => `
     <label>
-      <input type="checkbox" checked value="${c.id}"}>
+      <input type="checkbox" checked value="${c.id}">
       <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
       <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
     </label>
@@ -292,7 +294,7 @@ function renderCard(c) {
         <span>Bardic <span class="bubble"></span> [d6]</span>
         <span>Reaction <span class="bubble"></span></span>
         <span class="death">
-          <span >Death saves </span>
+          <span>Death saves </span>
           ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
         </span>
       </div>

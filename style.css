@@ -110,7 +110,7 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
 .card .bubble { display: inline-block; width: 3mm; height: 3mm; border: 1.2px solid #222; border-radius: 50%; }
 .card .bubble.x { border-radius: 0; transform: rotate(45deg); width: 2.6mm; height: 2.6mm; }
 .card .blank { border-bottom: 1px solid #aaa; flex: 1; min-height: 4mm; }
-.card .notes-block { border: 1px solid #bbb; min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto}
+.card .notes-block { border: 1px solid #bbb; min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto; }
 .card .resource-row { display: flex; gap: 2mm; align-items: center; font-size: 9pt; flex-wrap: wrap; }
 .card .resource-row .res-name { font-weight: bold; }
 .card .bottom-row { display: flex; justify-content: space-between; gap: 2mm; font-size: 8.5pt; }
