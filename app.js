@@ -390,13 +390,15 @@ function renderCard(c) {
        <div class="bottom-row">
          <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
          <span>Heroic <span class="bubble"></span></span>
-        <span class="death">
-          <span>Death saves </span>
-          ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
-        </span>
-      </div>
-      <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
-      ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div><div class="kv"><span class="k">Concentration</span><span class="v"></span><span class="k">Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Mod</span><span class="v">${c.spellMod ?? ''}</span></div>` : ''}
+         <span class="death">
+           <span>Death saves </span>
+           ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
+         </span>
+       </div>
+        <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
+        ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div>
+        <div class="kv"><span class="k">Concentration</span><span class="v"></span></div>
+        <div class="kv"><span class="k">Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Mod</span><span class="v">${c.spellMod ?? ''}</span></div>` : ''}
       ${resHtml}
       <div class="notes-block">Notes</div>
     </div>
