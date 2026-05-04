@@ -161,4 +161,5 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
   padding: 0.25rem 0.5rem; border-radius: 4px;
 }
 #close-settings:hover { background: #f0f0f0; }
-.settings-content { }
+.settings-content label { display: grid; gap: .25rem; font-size: .85em; color: #555; }
+.settings-content select { padding: .45rem; border: 1px solid #ccc; border-radius: 4px; font: inherit; background: #fff; }

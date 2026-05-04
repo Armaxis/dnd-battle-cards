@@ -387,9 +387,9 @@ function renderCard(c) {
         <div class="cell"><div class="lbl">Temp HP</div><div class="val">&nbsp;</div></div>
       </div>
       <div class="kv"><span class="k">Speed</span><span class="v">${c.speed ?? ''}</span><span class="k">Resists</span><span class="v">${escapeHtml(c.resist || '')}</span></div>
-      <div class="bottom-row">
-        <span>Bardic <span class="bubble"></span> [d6]</span>
-        <span>Reaction <span class="bubble"></span></span>
+       <div class="bottom-row">
+         <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
+         <span>Reaction <span class="bubble"></span></span>
         <span class="death">
           <span>Death saves </span>
           ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
@@ -437,8 +437,12 @@ function bindSettings() {
   const settingsBtn = document.getElementById('settings-btn');
   const settingsOverlay = document.getElementById('settings-overlay');
   const closeSettingsBtn = document.getElementById('close-settings');
+  const bardicDieSetting = document.getElementById('bardic-die-setting');
 
-  settingsBtn.onclick = () => { settingsOverlay.hidden = false; };
+  settingsBtn.onclick = () => {
+    bardicDieSetting.value = state.settings.bardicDie || 'd6';
+    settingsOverlay.hidden = false;
+  };
   closeSettingsBtn.onclick = () => { settingsOverlay.hidden = true; };
   settingsOverlay.onclick = (e) => {
     if (e.target === settingsOverlay) settingsOverlay.hidden = true;
@@ -446,6 +450,11 @@ function bindSettings() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !settingsOverlay.hidden) settingsOverlay.hidden = true;
   });
+  bardicDieSetting.onchange = () => {
+    state.settings.bardicDie = bardicDieSetting.value;
+    save();
+    renderPrint();
+  };
 }
 
 // ---------- utils ----------
