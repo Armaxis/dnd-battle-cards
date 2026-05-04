@@ -389,7 +389,7 @@ function renderCard(c) {
       <div class="kv"><span class="k">Speed</span><span class="v">${c.speed ?? ''}</span><span class="k">Resists</span><span class="v">${escapeHtml(c.resist || '')}</span></div>
        <div class="bottom-row">
          <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
-         <span>Reaction <span class="bubble"></span></span>
+         <span>Heroic <span class="bubble"></span></span>
         <span class="death">
           <span>Death saves </span>
           ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
