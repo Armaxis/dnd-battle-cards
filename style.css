@@ -110,6 +110,8 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
 .card .kv .k { color: #666; text-transform: uppercase; font-size: 7pt; letter-spacing: .05em; align-self: center; }
 .card .kv .v { flex: 1; border-bottom: 1px solid #ccc; min-height: 4mm; }
 .card .slots { display: flex; flex-wrap: wrap; gap: 1.5mm; font-size: 9pt; }
+.card .spell-box { border: 1px solid #bbb; padding: 2mm 2mm; border-radius: 2px; position: relative; margin-top: 2mm; }
+.card .spell-box .box-title { position: absolute; top: 0; left: 3mm; transform: translateY(-50%); background: white; padding: 0 1mm; font-size: 7pt; color: #666; text-transform: uppercase; letter-spacing: .05em; }
 .card .slot-group { display: flex; gap: .5mm; align-items: center; }
 .card .slot-group .lvl { font-weight: bold; margin-right: .5mm; }
 .card .bubble { display: inline-block; width: 3mm; height: 3mm; border: 1.2px solid #222; border-radius: 50%; }
@@ -118,7 +120,7 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
 .card .notes-block { border: 1px solid #bbb; min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto; }
 .card .resource-row { display: flex; gap: 2mm; align-items: center; font-size: 9pt; flex-wrap: wrap; }
 .card .resource-row .res-name { font-weight: bold; }
-.card .bottom-row { display: flex; justify-content: space-between; gap: 2mm; font-size: 8.5pt; }
+.card .bottom-row { display: flex; justify-content: space-between; gap: 2mm; font-size: 8.5pt; margin-top: 1mm; margin-bottom: 1mm;}
 .card .death { display: flex; gap: 1mm; align-items: center; }
 .card .death .lbl { font-size: 7pt; color: #666; }
 

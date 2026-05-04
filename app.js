@@ -370,7 +370,7 @@ function renderCard(c) {
   const resources = c.resources || [];
   const resHtml = resources.filter(r => r.name && r.count > 0).map(r => {
     const count = r.count;
-    return `<div class="line"></div><div class="resource-row"><span class="res-name">${escapeHtml(r.name)}:</span>${
+    return `<div class="resource-row"><span class="res-name">${escapeHtml(r.name)}:</span>${
       count >= 20 ? `<span>∞</span>` : bubbles(Math.min(count, 12))
     }</div>`;
   }).join('');
@@ -386,20 +386,31 @@ function renderCard(c) {
         <div class="cell"><div class="lbl">HP / ${c.hp ?? '___'}</div><div class="val">&nbsp;</div></div>
         <div class="cell"><div class="lbl">Temp HP</div><div class="val">&nbsp;</div></div>
       </div>
-      <div class="kv"><span class="k">Speed</span><span class="v">${c.speed ?? ''}</span><span class="k">Resists</span><span class="v">${escapeHtml(c.resist || '')}</span></div>
-       <div class="bottom-row">
-         <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
-         <span>Heroic <span class="bubble"></span></span>
-         <span class="death">
-           <span>Death saves </span>
-           ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
-         </span>
-       </div>
-       <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
-        ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div>` : ''}
-        ${c.isSpellcaster ? `<div class="kv"><span class="k">Concentration</span><span class="v"></span></div>
-        <div class="kv"><span class="k">Spell Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Spell Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Spellcasting Mod</span><span class="v">${c.spellMod ?? ''}</span></div>` : ''}
-      ${resHtml}
+      <div class="spell-box">
+        <span class="box-title">General</span>
+        <div class="kv"><span class="k">Speed</span><span class="v">${c.speed ?? ''}</span><span class="k">Resists</span><span class="v">${escapeHtml(c.resist || '')}</span></div>
+        <div class="bottom-row">
+          <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
+          <span>Heroic <span class="bubble"></span></span>
+          <span class="death">
+            <span>Death saves </span>
+            ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
+          </span>
+         </div>
+         <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
+      </div>
+         ${c.isSpellcaster ? `<div class="spell-box">
+         <span class="box-title">Magic</span>
+         <div class="kv"><span class="k">Spell Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Spell Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Spellcasting Mod</span><span class="v">${c.spellMod ?? ''}</span></div>
+         <div class="kv"><span class="k">Concentration</span><span class="v"></span></div>
+         ${slotHtml ? `<div class="slots">Spell spots: ${slotHtml}</div>` : ''}
+         </div>` : ''}
+      ${resHtml ? `<div class="spell-box">
+                     <span class="box-title">Resources</span>
+                       ${resHtml}
+                     </div>`
+                : ''
+      }
       <div class="notes-block">Notes</div>
     </div>
   `;
