@@ -34,24 +34,27 @@
       <label>Max HP <input name="hp" type="number" min="1"></label>
       <label>Speed <input name="speed" value="30"></label>
     </div>
-    <div class="row">
-      <label>Spell Save <input name="spellSave"></label>
-    </div>
+    <label class="inline"><input type="checkbox" name="isSpellcaster"> Is Spellcaster</label>
+    <fieldset id="spellcasting-field" hidden>
+      <legend>Spellcasting</legend>
+      <div class="row">
+        <label>Spell Save DC <input name="spellSaveDC"></label>
+        <label>Spell Attack <input name="spellAttack"></label>
+        <label>Spell Mod <input name="spellMod"></label>
+      </div>
+    </fieldset>
     <label>Resist / Immune / Vulnerable <input name="resist" placeholder="Resist: fire · Immune: poison"></label>
 
-    <fieldset>
+    <fieldset id="spellslots-field" hidden>
       <legend>Spell Slots</legend>
       <label class="inline"><input type="checkbox" name="autoSlots" checked> Auto-fill from class &amp; level</label>
       <div id="manual-slots" hidden></div>
     </fieldset>
 
-    <fieldset id="resource-field" hidden>
+    <fieldset id="resource-field">
       <legend>Class Resources</legend>
       <div id="resources-list"></div>
-      <div class="resource-actions">
-        <button type="button" id="add-resource">+ Add Resource</button>
-        <label class="inline"><input type="checkbox" name="autoResource" checked> Auto-fill from level</label>
-      </div>
+      <button type="button" id="add-resource">+ Add Resource</button>
     </fieldset>
 
     <div class="actions">

@@ -73,58 +73,30 @@ const CLASSES_DATA =
       "caster": "half"
     },
     "Barbarian": {
-      "caster": "none",
-      "resource": {
-        "name": "Rage",
-        "byLevel": [2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6]
-      }
+      "caster": "none"
     },
     "Bard": { 
-      "caster": "full",
-      "resource": {
-        "name": "Bardic Inspirations",
-        "byLevel": [3,3,3,3,3,4,4,4,4,10,11,12,13,14,15,16,17,18,19,20]
-      }
+      "caster": "full"
     },
     "Cleric": { "caster": "full" },
     "Druid": { "caster": "full" },
     "Fighter": {
-      "caster": "none",
-      "resource": {
-        "name": "Action Surge",
-        "byLevel": [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2]
-      }
+      "caster": "none"
     },
     "Monk": {
-      "caster": "none",
-      "resource": {
-        "name": "Ki",
-        "byLevel": [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-      }
+      "caster": "none"
     },
     "Paladin": {
-      "caster": "half",
-      "resource": {
-        "name": "Channel Divinity",
-        "byLevel": [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-      }
+      "caster": "half"
     },
     "Ranger": { "caster": "half" },
     "Rogue": { "caster": "none" },
     "Sorcerer": {
-      "caster": "full",
-      "resource": {
-        "name": "Sorcery Points",
-        "byLevel": [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-      }
+      "caster": "full"
     },
     "Warlock": { "caster": "warlock" },
     "Wizard": {
-      "caster": "full",
-      "resource": {
-        "name": "Arcane Recovery",
-        "byLevel": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-      }
+      "caster": "full"
     }
   }
 }

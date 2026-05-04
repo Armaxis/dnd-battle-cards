@@ -57,8 +57,9 @@ header .io .btn {
 #resources-list .resource-row .btn-sm { padding: .25rem .45rem; font-size: .8em; border: 1px solid #ccc; background: #f8f8f8; border-radius: 3px; cursor: pointer; }
 #resources-list .resource-row .btn-sm:hover { background: #eee; }
 #resources-list .resource-row .btn-remove { color: #8b0000; border-color: #8b0000; }
-.resource-actions { display: flex; gap: .75rem; align-items: center; margin-top: .35rem; }
-.resource-actions label.inline { display: flex; gap: .4rem; align-items: center; font-size: .85em; color: #555; }
+#resource-field { border: 1px solid #ddd; border-radius: 4px; padding: .75rem; }
+#resource-field legend { padding: 0 .4rem; color: #555; font-size: .85em; }
+#resource-field button { margin-top: .4rem; cursor: pointer; }
 
 button { cursor: pointer; }
 button.primary { background: #8b0000; color: white; border: none; padding: .55rem 1rem; border-radius: 4px; font: inherit; }

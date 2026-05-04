@@ -37,15 +37,18 @@ function load() {
 }
 
 function migrateChar(c) {
+  if (c.isSpellcaster === undefined) {
+    c.isSpellcaster = isSpellcaster(c.class);
+  }
   if (Array.isArray(c.resources)) return c;
   if (c.resourceName && c.resourceName.trim()) {
     c.resources = [{ name: c.resourceName, count: c.resourceCount || 0 }];
   } else {
-    const preset = resourceForLevel(c.class, c.level);
-    c.resources = preset ? [{ name: preset.name, count: preset.count === '∞' ? 99 : (preset.count || 0) }] : [];
+    c.resources = [];
   }
   delete c.resourceName;
   delete c.resourceCount;
+  delete c.autoResource;
   return c;
 }
 function save() {
@@ -76,11 +79,9 @@ function slotsForLevel(className, level) {
   return [0,0,0,0,0,0,0,0,0];
 }
 
-function resourceForLevel(className, level) {
-  const res = CLASSES.classes[className]?.resource;
-  if (!res) return null;
-  const v = res.byLevel[level - 1];
-  return { name: res.name, count: v };
+function isSpellcaster(className) {
+  const cls = CLASSES.classes[className];
+  return cls && cls.caster !== 'none';
 }
 
 // ---------- library ----------
@@ -109,9 +110,10 @@ document.getElementById('new-char').onclick = () => {
     id: crypto.randomUUID(),
     name: '', class: 'Wizard', level: 1,
     ac: 10, hp: 8, speed: 30,
-    saves: '', resist: '', spellSave: '',
-    autoSlots: true, slots: null,
-    autoResource: true, resources: [],
+    saves: '', resist: '',
+    spellSaveDC: '', spellAttack: '', spellMod: '',
+    isSpellcaster: false, autoSlots: true, slots: null,
+    resources: [],
   };
   state.characters.push(c);
   state.selectedId = c.id;
@@ -124,18 +126,16 @@ function bindForm() {
   const autoSlots = form.autoSlots;
   const classSel = form.class;
   const levelInput = form.level;
-  const autoResource = form.autoResource;
 
   const refreshAuto = () => {
     if (autoSlots.checked) renderManualSlots(true);
     else renderManualSlots(false);
-    updateResourceField();
   };
 
-  classSel.onchange = refreshAuto;
-  levelInput.oninput = refreshAuto;
+  classSel.onchange = () => { refreshAuto(); updateSpellFields(); };
+  levelInput.oninput = () => { refreshAuto(); updateSpellFields(); };
   autoSlots.onchange = refreshAuto;
-  autoResource.onchange = () => { updateResourceField(); renderResourceList(); };
+  form.isSpellcaster.onchange = () => { updateSpellFields(); };
 
   document.getElementById('add-resource').onclick = () => {
     const c = state.characters.find(x => x.id === state.selectedId);
@@ -148,20 +148,21 @@ function bindForm() {
     e.preventDefault();
     const c = state.characters.find(x => x.id === state.selectedId);
     if (!c) return;
-    const fd = new FormData(form);
     c.resources = collectResources();
     Object.assign(c, {
-      name: fd.get('name'),
-      class: fd.get('class'),
-      level: +fd.get('level'),
-      ac: +fd.get('ac'),
-      hp: +fd.get('hp'),
-      speed: +fd.get('speed'),
-      saves: fd.get('saves'),
-      resist: fd.get('resist'),
-      spellSave: fd.get('spellSave'),
+      name: c.name || '',
+      class: form.class.value,
+      level: +form.level.value,
+      ac: +form.ac.value,
+      hp: +form.hp.value,
+      speed: +form.speed.value,
+      saves: form.saves.value,
+      resist: form.resist.value,
+      spellSaveDC: form.spellSaveDC.value,
+      spellAttack: form.spellAttack.value,
+      spellMod: form.spellMod.value,
+      isSpellcaster: form.isSpellcaster.checked,
       autoSlots: form.autoSlots.checked,
-      autoResource: form.autoResource.checked,
     });
     if (!c.autoSlots) {
       c.slots = [];
@@ -199,12 +200,10 @@ function renderResourceList() {
   const host = document.getElementById('resources-list');
   const c = state.characters.find(x => x.id === state.selectedId);
   if (!c) return;
-  const form = document.getElementById('char-form');
-  const auto = form.autoResource.checked;
   host.innerHTML = c.resources.map((r, i) => `
     <div class="resource-row" data-idx="${i}">
-      <input class="res-name-input" placeholder="Resource name" value="${escapeHtml(r.name)}" ${auto ? 'disabled' : ''}>
-      <input class="res-count-input" type="number" min="0" value="${r.count}" style="width:55px" ${auto ? 'disabled' : ''}>
+      <input class="res-name-input" placeholder="Resource name" value="${escapeHtml(r.name)}">
+      <input class="res-count-input" type="number" min="0" value="${r.count}" style="width:55px">
       <button class="btn-sm" type="button" data-action="up" ${i === 0 ? 'disabled' : ''}>▲</button>
       <button class="btn-sm" type="button" data-action="down" ${i === c.resources.length - 1 ? 'disabled' : ''}>▼</button>
       <button class="btn-sm btn-remove" type="button" data-action="remove">✕</button>
@@ -237,12 +236,14 @@ function fillForm(c) {
   form.hp.value = c.hp || '';
   form.speed.value = c.speed || 30;
   form.resist.value = c.resist || '';
-  form.spellSave.value = c.spellSave || '';
+  form.spellSaveDC.value = c.spellSaveDC || '';
+  form.spellAttack.value = c.spellAttack || '';
+  form.spellMod.value = c.spellMod || '';
+  form.isSpellcaster.checked = c.isSpellcaster || false;
   form.autoSlots.checked = c.autoSlots !== false;
-  form.autoResource.checked = c.autoResource !== false;
   if (!Array.isArray(c.resources)) c.resources = [];
   renderManualSlots(form.autoSlots.checked);
-  updateResourceField();
+  updateSpellFields();
   renderResourceList();
 }
 
@@ -259,24 +260,20 @@ function renderManualSlots(auto) {
   `).join('');
 }
 
-function updateResourceField() {
+function updateSpellFields() {
   const form = document.getElementById('char-form');
-  const cls = form.class.value;
-  const lvl = +form.level.value || 1;
-  const c = state.characters.find(x => x.id === state.selectedId);
-  const preset = resourceForLevel(cls, lvl);
-  const field = document.getElementById('resource-field');
-  field.hidden = false;
-  if (preset && form.autoResource.checked && c) {
-    if (!Array.isArray(c.resources)) c.resources = [];
-    const presetObj = { name: preset.name, count: preset.count === '∞' ? 99 : (preset.count || 0) };
-    if (c.resources.length === 0) {
-      c.resources.push(presetObj);
-    } else if (!c.resources[0].name || c.resources[0].name.toLowerCase() === preset.name.toLowerCase()) {
-      c.resources[0] = presetObj;
-    } else {
-      c.resources[0].count = presetObj.count;
-    }
+  const spellSlotsField = document.getElementById('spellslots-field');
+  const spellcastingField = document.getElementById('spellcasting-field');
+  const manualSlots = document.getElementById('manual-slots');
+  const show = form.isSpellcaster.checked;
+  spellSlotsField.hidden = !show;
+  spellcastingField.hidden = !show;
+  if (show) {
+    if (form.autoSlots.checked) renderManualSlots(true);
+    else renderManualSlots(false);
+  } else {
+    manualSlots.hidden = true;
+    form.autoSlots.checked = false;
   }
 }
 
@@ -325,7 +322,9 @@ function bubbles(n, x = false) {
 }
 
 function renderCard(c) {
-  const slots = c.autoSlots === false && c.slots ? c.slots : slotsForLevel(c.class, c.level);
+  const slots = c.isSpellcaster
+    ? (c.autoSlots === false && c.slots ? c.slots : slotsForLevel(c.class, c.level))
+    : null;
   const slotHtml = (slots || []).map((n, i) =>
     n > 0 ? `<span class="slot-group"><span class="lvl">Level ${i+1}</span>${bubbles(n)}</span>` : ''
   ).filter(Boolean).join('');
@@ -359,7 +358,7 @@ function renderCard(c) {
         </span>
       </div>
       <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
-      ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div><div class="kv"><span class="k">Concentration</span><span class="v"></span><span class="k">Spell Save</span><span class="v">${c.spellSave ?? ''}</span></div>` : ''}
+      ${slotHtml ? `<div class="line"></div><div class="slots">Spell spots: ${slotHtml}</div><div class="kv"><span class="k">Concentration</span><span class="v"></span><span class="k">Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Mod</span><span class="v">${c.spellMod ?? ''}</span></div>` : ''}
       ${resHtml}
       <div class="notes-block">Notes</div>
     </div>
