@@ -1,3 +1,9 @@
+// D&D class preset data: spell slot tables and class definitions.
+
+// casterTypes defines spell slot progression for each caster category:
+//   full    – levels 1-9, index 0-19 = character level 1-20
+//   half    – half-casters get slots later and fewer at high levels
+//   warlock – object format {slots, level} since all pact slots are the same level
 const CLASSES_DATA = 
 {
   "casterTypes": {
@@ -68,6 +74,9 @@ const CLASSES_DATA =
       {"slots":4,"level":5}
     ]
   },
+
+  // Class definitions map to caster types.
+  // caster: 'full' | 'half' | 'warlock' | 'none'
   "classes": {
     "Artificer": {
       "caster": "half"

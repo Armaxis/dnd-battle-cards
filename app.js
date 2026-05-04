@@ -1,14 +1,18 @@
+// localStorage key for persisting characters and battle name
 const STORAGE_KEY = 'dnd-battle-cards-v1';
 let CLASSES = null;
+
+// Application state
 let state = {
-  characters: [],
-  selectedId: null,
-  battleName: '',
-  picked: new Set(),
-  layout: '6',
+  characters: [],       // Array of character objects
+  selectedId: null,     // Currently selected/edited character ID
+  battleName: '',       // Title shown on printed cards
+  picked: new Set(),    // IDs of characters EXCLUDED from print
+  layout: '6',          // '6' | '4' | '2' (cards per page)
 };
 
 // ---------- boot ----------
+// Initialize app: load data, build UI, wire events, render
 (function init() {
   CLASSES = CLASSES_DATA;
   load();
@@ -25,6 +29,7 @@ let state = {
 })();
 
 // ---------- persistence ----------
+// Load characters and battle name from localStorage
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -36,6 +41,9 @@ function load() {
   } catch {}
 }
 
+// Migrate legacy character objects to current schema.
+// Converts old single-resource fields to resources array,
+// infers isSpellcaster for old data, removes deprecated keys.
 function migrateChar(c) {
   if (c.isSpellcaster === undefined) {
     c.isSpellcaster = isSpellcaster(c.class);
@@ -51,6 +59,8 @@ function migrateChar(c) {
   delete c.autoResource;
   return c;
 }
+
+// Persist characters and battle name to localStorage
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     characters: state.characters,
@@ -59,12 +69,16 @@ function save() {
 }
 
 // ---------- class presets ----------
+// Populate the class <select> dropdown from CLASSES_DATA
 function buildClassOptions() {
   const sel = document.getElementById('class-select');
   sel.innerHTML = Object.keys(CLASSES.classes)
     .map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
+// Look up spell slot array for a given class and level.
+// Returns a 9-element array (one per spell level) for full/half casters,
+// or maps warlock pact slot count to the correct spell level index.
 function slotsForLevel(className, level) {
   const cls = CLASSES.classes[className];
   if (!cls) return null;
@@ -79,12 +93,14 @@ function slotsForLevel(className, level) {
   return [0,0,0,0,0,0,0,0,0];
 }
 
+// Check if a class has spellcasting (caster type is not 'none')
 function isSpellcaster(className) {
   const cls = CLASSES.classes[className];
   return cls && cls.caster !== 'none';
 }
 
 // ---------- library ----------
+// Render the character list and populate the editor form for the selected character
 function render() {
   const list = document.getElementById('char-list');
   list.innerHTML = state.characters.map(c => `
@@ -100,11 +116,13 @@ function render() {
   else document.getElementById('char-form').hidden = true;
 }
 
+// Select a character for editing
 function selectChar(id) {
   state.selectedId = id;
   render();
 }
 
+// Create a new blank character and select it for editing
 document.getElementById('new-char').onclick = () => {
   const c = {
     id: crypto.randomUUID(),
@@ -121,12 +139,14 @@ document.getElementById('new-char').onclick = () => {
   save(); render(); renderBattle();
 };
 
+// Wire up form events: auto-refresh, add resource, submit, cancel, delete
 function bindForm() {
   const form = document.getElementById('char-form');
   const autoSlots = form.autoSlots;
   const classSel = form.class;
   const levelInput = form.level;
 
+  // Refresh spell slot inputs when class, level, or autoSlots changes
   const refreshAuto = () => {
     if (autoSlots.checked) renderManualSlots(true);
     else renderManualSlots(false);
@@ -137,6 +157,7 @@ function bindForm() {
   autoSlots.onchange = refreshAuto;
   form.isSpellcaster.onchange = () => { updateSpellFields(); };
 
+  // Add an empty resource row to the current character
   document.getElementById('add-resource').onclick = () => {
     const c = state.characters.find(x => x.id === state.selectedId);
     if (!c) return;
@@ -144,6 +165,7 @@ function bindForm() {
     renderResourceList();
   };
 
+  // Save character from form values
   form.onsubmit = (e) => {
     e.preventDefault();
     const c = state.characters.find(x => x.id === state.selectedId);
@@ -173,9 +195,12 @@ function bindForm() {
     save(); render(); renderBattle();
   };
 
+  // Deselect character without saving
   document.getElementById('cancel-edit').onclick = () => {
     state.selectedId = null; render();
   };
+
+  // Delete character after confirmation
   document.getElementById('delete-char').onclick = () => {
     if (!confirm('Delete this character?')) return;
     state.characters = state.characters.filter(c => c.id !== state.selectedId);
@@ -184,6 +209,7 @@ function bindForm() {
   };
 }
 
+// Read all resource rows from the DOM and return a clean array
 function collectResources() {
   const list = document.getElementById('resources-list');
   const rows = list.querySelectorAll('.resource-row');
@@ -196,6 +222,7 @@ function collectResources() {
   return res;
 }
 
+// Render the list of resource rows with name/count inputs and reorder/remove buttons
 function renderResourceList() {
   const host = document.getElementById('resources-list');
   const c = state.characters.find(x => x.id === state.selectedId);
@@ -225,6 +252,7 @@ function renderResourceList() {
   });
 }
 
+// Populate the editor form with a character's data
 function fillForm(c) {
   if (!c) return;
   const form = document.getElementById('char-form');
@@ -247,6 +275,7 @@ function fillForm(c) {
   renderResourceList();
 }
 
+// Render the 9 manual spell slot level inputs, either auto-filled or from stored values
 function renderManualSlots(auto) {
   const host = document.getElementById('manual-slots');
   host.hidden = auto;
@@ -260,6 +289,7 @@ function renderManualSlots(auto) {
   `).join('');
 }
 
+// Show or hide spell-related fieldsets based on the isSpellcaster checkbox
 function updateSpellFields() {
   const form = document.getElementById('char-form');
   const spellSlotsField = document.getElementById('spellslots-field');
@@ -278,6 +308,7 @@ function updateSpellFields() {
 }
 
 // ---------- battle tab ----------
+// Wire up battle name input and layout selector
 function bindBattle() {
   const bn = document.getElementById('battle-name');
   bn.value = state.battleName;
@@ -289,6 +320,7 @@ function bindBattle() {
   };
 }
 
+// Render the pick-list checkboxes for selecting which characters appear on printed cards
 function renderBattle() {
   const host = document.getElementById('pick-list');
   host.innerHTML = state.characters.map(c => `
@@ -307,6 +339,7 @@ function renderBattle() {
   renderPrint();
 }
 
+// Render the printable card area: title + cards for un-picked characters
 function renderPrint() {
   document.getElementById('battle-title').textContent = state.battleName ? `⚔ ${state.battleName} ⚔` : '';
   document.getElementById('print-area').className = `layout-${state.layout}`;
@@ -316,11 +349,13 @@ function renderPrint() {
 }
 
 // ---------- card rendering ----------
+// Generate n bubble spans; if x is true, render as crossed-out (used)
 function bubbles(n, x = false) {
   if (!n || n <= 0) return '';
   return Array.from({length: n}, () => `<span class="bubble ${x ? 'x' : ''}"></span>`).join('');
 }
 
+// Render a single character's printable card HTML
 function renderCard(c) {
   const slots = c.isSpellcaster
     ? (c.autoSlots === false && c.slots ? c.slots : slotsForLevel(c.class, c.level))
@@ -366,6 +401,7 @@ function renderCard(c) {
 }
 
 // ---------- export/import ----------
+// Wire up JSON export (download) and import (file upload) buttons
 function bindIO() {
   document.getElementById('export').onclick = () => {
     const blob = new Blob([JSON.stringify({
@@ -394,6 +430,7 @@ function bindIO() {
 }
 
 // ---------- utils ----------
+// Escape HTML special characters to prevent XSS in rendered output
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
