@@ -28,23 +28,20 @@
         <select name="class" id="class-select"></select>
       </label>
       <label>Level <input name="level" type="number" min="1" max="20" value="1"></label>
-    </div>
-    <div class="row">
       <label>AC <input name="ac"></label>
       <label>Max HP <input name="hp" type="number" min="1"></label>
       <label>Speed <input name="speed" value="30"></label>
     </div>
+    <label>Resist / Immune / Vulnerable <input name="resist" placeholder="Resist: fire · Immune: poison"></label>
     <label class="inline"><input type="checkbox" name="isSpellcaster"> Is Spellcaster</label>
     <fieldset id="spellcasting-field" hidden>
       <legend>Spellcasting</legend>
-      <div class="row">
+      <div class="row spell-row">
         <label>Spell Save DC <input name="spellSaveDC"></label>
         <label>Spell Attack <input name="spellAttack"></label>
         <label>Spell Mod <input name="spellMod"></label>
       </div>
     </fieldset>
-    <label>Resist / Immune / Vulnerable <input name="resist" placeholder="Resist: fire · Immune: poison"></label>
-
     <fieldset id="spellslots-field" hidden>
       <legend>Spell Slots</legend>
       <label class="inline"><input type="checkbox" name="autoSlots" checked> Auto-fill from class &amp; level</label>

@@ -44,7 +44,8 @@ header .io .btn {
   padding: .45rem; border: 1px solid #ccc; border-radius: 4px;
   font: inherit; background: #fff;
 }
-.form-pane .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.form-pane .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; }
+.form-pane .row.spell-row { grid-template-columns: repeat(3, 1fr); }
 .form-pane fieldset { border: 1px solid #ddd; border-radius: 4px; padding: .75rem; }
 .form-pane legend { padding: 0 .4rem; color: #555; font-size: .85em; }
 #manual-slots { display: grid; grid-template-columns: repeat(9, 1fr); gap: .4rem; margin-top: .5rem; }
