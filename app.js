@@ -128,7 +128,7 @@ document.getElementById('new-char').onclick = () => {
     id: crypto.randomUUID(),
     name: '', class: 'Wizard', level: 1,
     ac: 10, hp: 8, speed: 30,
-    saves: '', resist: '',
+    resist: '',
     spellSaveDC: '', spellAttack: '', spellMod: '',
     isSpellcaster: false, autoSlots: true, slots: null,
     resources: [],
@@ -172,13 +172,12 @@ function bindForm() {
     if (!c) return;
     c.resources = collectResources();
     Object.assign(c, {
-      name: c.name || '',
+      name: form.name.value,
       class: form.class.value,
       level: +form.level.value,
       ac: +form.ac.value,
       hp: +form.hp.value,
       speed: +form.speed.value,
-      saves: form.saves.value,
       resist: form.resist.value,
       spellSaveDC: form.spellSaveDC.value,
       spellAttack: form.spellAttack.value,
