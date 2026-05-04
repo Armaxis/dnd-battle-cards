@@ -136,3 +136,29 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
   .layout-4 .card { height: 130mm; }
   .layout-2 .card { height: 130mm; }
 }
+
+#settings-btn { padding: .5rem .7rem; }
+
+#settings-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+  z-index: 10000;
+}
+#settings-overlay[hidden] { display: none; }
+
+.settings-dialog {
+  background: #fff; padding: 1.5rem; border-radius: 8px; border: 1px solid #ddd;
+  max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.settings-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #eee;
+}
+.settings-header h2 { margin: 0; font-size: 1.2rem; }
+#close-settings {
+  background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;
+  padding: 0.25rem 0.5rem; border-radius: 4px;
+}
+#close-settings:hover { background: #f0f0f0; }
+.settings-content { }

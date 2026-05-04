@@ -9,6 +9,7 @@ let state = {
   battleName: '',       // Title shown on printed cards
   picked: new Set(),    // IDs of characters EXCLUDED from print
   layout: '6',          // '6' | '4' | '2' (cards per page)
+  settings: {},         // Global settings
 };
 
 // ---------- boot ----------
@@ -20,6 +21,7 @@ let state = {
   bindForm();
   bindBattle();
   bindIO();
+  bindSettings();
   render();
   renderBattle();
   if (state.characters.length > 0 && !state.selectedId) {
@@ -37,6 +39,7 @@ function load() {
       const d = JSON.parse(raw);
       state.characters = (d.characters || []).map(migrateChar);
       state.battleName = d.battleName || '';
+      state.settings = d.settings || {};
     }
   } catch {}
 }
@@ -65,6 +68,7 @@ function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     characters: state.characters,
     battleName: state.battleName,
+    settings: state.settings,
   }));
 }
 
@@ -426,6 +430,22 @@ function bindIO() {
     };
     r.readAsText(file);
   };
+}
+
+// ---------- settings ----------
+function bindSettings() {
+  const settingsBtn = document.getElementById('settings-btn');
+  const settingsOverlay = document.getElementById('settings-overlay');
+  const closeSettingsBtn = document.getElementById('close-settings');
+
+  settingsBtn.onclick = () => { settingsOverlay.hidden = false; };
+  closeSettingsBtn.onclick = () => { settingsOverlay.hidden = true; };
+  settingsOverlay.onclick = (e) => {
+    if (e.target === settingsOverlay) settingsOverlay.hidden = true;
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !settingsOverlay.hidden) settingsOverlay.hidden = true;
+  });
 }
 
 // ---------- utils ----------

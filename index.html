@@ -12,6 +12,7 @@
   <div class="io">
     <button id="export">Export JSON</button>
     <label class="btn">Import JSON<input type="file" id="import" accept="application/json" hidden></label>
+    <button id="settings-btn" title="Global Settings">⚙</button>
   </div>
 </header>
 
@@ -79,6 +80,17 @@
     </div>
   </section>
 </main>
+
+<div id="settings-overlay" class="no-print" hidden>
+  <div class="settings-dialog">
+    <div class="settings-header">
+      <h2>Global Settings</h2>
+      <button id="close-settings" title="Close">✕</button>
+    </div>
+    <div class="settings-content">
+    </div>
+  </div>
+</div>
 
 <script src="classes.js"></script>
 <script src="app.js"></script>
