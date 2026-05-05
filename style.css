@@ -139,6 +139,22 @@ header .io button, header .io .btn {
   font-size: .85em;
 }
 
+#empty-hint {
+  align-self: start;
+  grid-column: 2;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.hint-text {
+  font-size: 1.1em;
+  color: #666;
+  margin: 0;
+}
+
 #manual-slots {
   display: grid;
   grid-template-columns: repeat(9, 1fr);

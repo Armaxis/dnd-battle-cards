@@ -116,13 +116,44 @@ function render() {
   list.querySelectorAll('li').forEach(li => {
     li.onclick = () => selectChar(li.dataset.id);
   });
-  if (state.selectedId) fillForm(state.characters.find(c => c.id === state.selectedId));
-  else document.getElementById('char-form').hidden = true;
+
+  const form = document.getElementById('char-form');
+  const emptyHint = document.getElementById('empty-hint');
+
+  // Show empty hint when no characters exist, hide form
+  if (state.characters.length === 0) {
+    emptyHint.style.display = '';
+    form.style.display = 'none';
+    return;
+  } else {
+    emptyHint.style.display = 'none';
+  }
+
+  // Hide form when no character is selected
+  if (!state.selectedId) {
+    form.style.display = 'none';
+    return;
+  }
+
+  // Show form for selected character
+  const character = state.characters.find(c => c.id === state.selectedId);
+  if (character) {
+    fillForm(character);
+  } else {
+    form.style.display = 'none';
+    state.selectedId = null;
+  }
 }
 
 // Select a character for editing
 function selectChar(id) {
   state.selectedId = id;
+  render();
+}
+
+// Deselect character and hide editor form
+function deselectChar() {
+  state.selectedId = null;
   render();
 }
 
@@ -199,9 +230,7 @@ function bindForm() {
   };
 
   // Deselect character without saving
-  document.getElementById('cancel-edit').onclick = () => {
-    state.selectedId = null; render();
-  };
+  document.getElementById('cancel-edit').onclick = deselectChar;
 
   // Delete character after confirmation
   document.getElementById('delete-char').onclick = () => {
@@ -259,7 +288,7 @@ function renderResourceList() {
 function fillForm(c) {
   if (!c) return;
   const form = document.getElementById('char-form');
-  form.hidden = false;
+  form.style.display = '';
   form.name.value = c.name || '';
   form.class.value = c.class || 'Wizard';
   form.level.value = c.level || 1;
