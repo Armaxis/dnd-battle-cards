@@ -379,6 +379,9 @@ function renderCard(c) {
     <div class="card">
       <div class="name-row">
         <span class="name">${escapeHtml(c.name || '')}</span>
+        <span class="death">
+                 ${bubbles(3)}✓ 💀 ✗${bubbles(3, true)}
+               </span>
       </div>
       <div class="stats">
         <div class="cell"><div class="lbl">Initiative</div><div class="val">&nbsp;</div></div>
@@ -393,23 +396,18 @@ function renderCard(c) {
            <div class="general-left">
              <div class="kv"><span class="k">Resists</span><span class="v">${escapeHtml(c.resist || '')}</span></div>
              <div class="kv"><span class="k">Conditions</span><span class="v"></span></div>
-             <div class="kv"><span class="v"></span></div>
            </div>
            <div class="general-right">
              <div class="nested-box">
                <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
                <span>Heroic <span class="bubble"></span> [re-roll]</span>
-               <span class="death">
-                 <span></span>
-                 ${bubbles(3)}✓ 💀 ✗${bubbles(3, true)}
-               </span>
              </div>
            </div>
          </div>
        </div>
          ${c.isSpellcaster ? `<div class="spell-box">
-         <span class="box-title">Magic</span>
-         <div class="kv"><span class="k">Spell Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Spell Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Spellcasting Mod</span><span class="v">${c.spellMod ?? ''}</span></div>
+         <span class="box-title">Spellcasting</span>
+         <div class="kv"><span class="k">Spell Save DC</span><span class="v">${c.spellSaveDC ?? ''}</span><span class="k">Spell Attack</span><span class="v">${c.spellAttack ?? ''}</span><span class="k">Spell Modifier</span><span class="v">${c.spellMod ?? ''}</span></div>
          <div class="kv"><span class="k">Concentration</span><span class="v"></span></div>
          ${slotHtml ? `<div class="slots">Spell spots: ${slotHtml}</div>` : ''}
          </div>` : ''}
