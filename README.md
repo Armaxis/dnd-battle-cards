@@ -4,6 +4,9 @@ A lightweight, offline-first web app for Dungeons & Dragons players and Dungeon 
 
 ![D&D Battle Cards](https://img.shields.io/badge/D&D-5e-purple) ![No Dependencies](https://img.shields.io/badge/dependencies-none-green) ![Offline First](https://img.shields.io/badge/offline-ready-blue)
 
+Live version: https://armaxis.github.io/dnd-battle-cards/
+(No installation, works locally)
+
 ## Features
 
 - **Printable Battle Cards** — Generate professionally formatted cards for each character with all essential combat information
