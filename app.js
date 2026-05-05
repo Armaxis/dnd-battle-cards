@@ -400,8 +400,8 @@ function renderCard(c) {
                <span>Bardic <span class="bubble"></span> [${state.settings.bardicDie || 'd6'}]</span>
                <span>Heroic <span class="bubble"></span> [re-roll]</span>
                <span class="death">
-                 <span>Death </span>
-                 ✓${bubbles(3)} &nbsp; ✗${bubbles(3, true)}
+                 <span></span>
+                 ${bubbles(3)}✓ 💀 ✗${bubbles(3, true)}
                </span>
              </div>
            </div>
@@ -418,10 +418,9 @@ function renderCard(c) {
                        <div class="resource-row">${resHtml}</div>
                      </div>`
                 : ''
-      }
-      <div class="spell-box">
-                     <span class="box-title">Notes</span>
-      <div class="notes-block"></div>
+      } 
+      <div class="notes-block">
+        <span class="box-title">Notes</span>
       </div>
     </div>
   `;
