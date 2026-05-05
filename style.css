@@ -99,26 +99,30 @@ button.danger  { background: #fff; color: #8b0000; border: 1px solid #8b0000; pa
   page-break-inside: avoid;
 }
 .card .name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 2mm; }
-.card .name-row .name { font-weight: bold; font-size: 12pt; }
+.card .name-row .name { font-weight: bold; font-size: 14pt; }
 .card .name-row .class-lvl { font-size: 8.5pt; color: #666; }
-.card .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1mm; font-size: 9pt; }
-.card .stats .cell { border: 1px solid #bbb; padding: 1mm 2mm; border-radius: 2px; }
-.card .stats .cell .lbl { font-size: 7pt; color: #666; text-transform: uppercase; letter-spacing: .05em; }
-.card .stats .cell .val { font-size: 11pt; font-weight: bold; }
+.card .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1mm; font-size: 9pt; margin-top: 2mm; }
+.card .stats .cell { border: 1px solid #bbb; padding: 1mm 2mm; border-radius: 2px; position: relative; min-height: 11mm;}
+.card .stats .cell .lbl { font-size: 7pt; color: #666; text-transform: uppercase; letter-spacing: .05em; position: absolute; top: 0; left: 1mm; transform: translateY(-50%); background: white; padding: 0 1mm; }
+.card .stats .cell .val { font-size: 18pt; text-align: center;}
 .card .line { border-top: 1px dashed #999; margin: .5mm 0; }
 .card .kv { font-size: 8.5pt; display: flex; gap: 1mm; }
 .card .kv .k { color: #666; text-transform: uppercase; font-size: 7pt; letter-spacing: .05em; align-self: center; }
 .card .kv .v { flex: 1; border-bottom: 1px solid #ccc; min-height: 4mm; }
-.card .slots { display: flex; flex-wrap: wrap; gap: 1.5mm; font-size: 9pt; }
+.card .slots { display: flex; flex-wrap: wrap; gap: 1.5mm; font-size: 9pt; margin-top: 1mm; }
 .card .spell-box { border: 1px solid #bbb; padding: 2mm 2mm; border-radius: 2px; position: relative; margin-top: 2mm; }
 .card .spell-box .box-title { position: absolute; top: 0; left: 3mm; transform: translateY(-50%); background: white; padding: 0 1mm; font-size: 7pt; color: #666; text-transform: uppercase; letter-spacing: .05em; }
+.card .general-body { display: flex; gap: 2mm; }
+.card .general-left { flex: 1; }
+.card .general-right { flex: 0 0 auto; }
+.card .nested-box { border: 1px solid #bbb; padding: 1mm 2mm; border-radius: 2px; display: flex; flex-direction: column; gap: 1mm; font-size: 8.5pt; }
 .card .slot-group { display: flex; gap: .5mm; align-items: center; }
 .card .slot-group .lvl { font-weight: bold; margin-right: .5mm; }
 .card .bubble { display: inline-block; width: 3mm; height: 3mm; border: 1.2px solid #222; border-radius: 50%; }
 .card .bubble.x { border-radius: 0; transform: rotate(45deg); width: 2.6mm; height: 2.6mm; }
 .card .blank { border-bottom: 1px solid #aaa; flex: 1; min-height: 4mm; }
-.card .notes-block { border: 1px solid #bbb; min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto; }
-.card .resource-row { display: flex; gap: 2mm; align-items: center; font-size: 9pt; flex-wrap: wrap; }
+.card .notes-block {min-height: 12mm; padding: 1mm; font-size: 7pt; color: #999; border-radius: 2px; flex: auto; }
+.card .resource-row { display: flex; gap: 1mm; align-items: center; font-size: 9pt; flex-wrap: wrap; }
 .card .resource-row .res-name { font-weight: bold; }
 .card .bottom-row { display: flex; justify-content: space-between; gap: 2mm; font-size: 8.5pt; margin-top: 1mm; margin-bottom: 1mm;}
 .card .death { display: flex; gap: 1mm; align-items: center; }
