@@ -14,6 +14,12 @@ A lightweight, offline-first web app for Dungeons & Dragons players and Dungeon 
 - **Zero Dependencies** — Pure vanilla JavaScript, HTML, and CSS. No build step, no npm, no frameworks
 - **Multiple Layout Options** — Choose between 6, 4, or 2 cards per page for printing
 
+## Screenshots
+<img width="1436" height="748" alt="image" src="https://github.com/user-attachments/assets/7d23ce38-96d2-4cb9-9a37-8fd9db6f03e3" />
+<img width="1426" height="690" alt="image" src="https://github.com/user-attachments/assets/07bef371-0862-4b9c-9119-399dc8db7f3e" />
+
+
+
 ## Quick Start
 
 1. Clone this repository or download the files
