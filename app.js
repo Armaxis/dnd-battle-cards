@@ -383,9 +383,8 @@ function renderBattle() {
   renderPrint();
 }
 
-// Render the printable card area: title + cards for un-picked characters
+// Render the printable card area: cards for un-picked characters
 function renderPrint() {
-  document.getElementById('battle-title').textContent = '';
   document.getElementById('print-area').className = `layout-${state.layout}`;
   const cards = document.getElementById('cards');
   const picked = state.characters.filter(c => !state.picked.has(c.id));
