@@ -24,6 +24,8 @@ let state = {
   bindSettings();
   // Auto-select all characters for printing on page load
   state.picked.clear();
+  // Apply saved layout
+  document.getElementById('print-area').className = `layout-${state.layout}`;
   render();
   renderBattle();
   if (state.characters.length > 0 && !state.selectedId) {
@@ -356,28 +358,30 @@ function updateSpellFields() {
 }
 
 // ---------- battle tab ----------
-// Wire up battle name input and layout selector
+// Wire up layout selector (now in settings)
 function bindBattle() {
-  const bn = document.getElementById('battle-name');
-  bn.value = state.battleName;
-  bn.oninput = () => { state.battleName = bn.value; save(); renderPrint(); };
-  document.getElementById('layout').onchange = (e) => {
-    state.layout = e.target.value;
-    document.getElementById('print-area').className = `layout-${state.layout}`;
-    renderPrint();
-  };
+  // Remove battle name references
+  // Layout is now handled in bindSettings()
 }
 
 // Render the pick-list checkboxes for selecting which characters appear on printed cards
 function renderBattle() {
   const host = document.getElementById('pick-list');
-  host.innerHTML = state.characters.map(c => `
-    <label>
-      <input type="checkbox" ${!state.picked.has(c.id) ? 'checked' : ''} value="${c.id}">
-      <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
-      <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
-    </label>
-  `).join('');
+  if (state.characters.length === 0) {
+    host.innerHTML = '';
+    renderPrint();
+    return;
+  }
+  host.innerHTML = `
+    <p class="pick-hint">Select characters you want to include on the print:</p>
+    ${state.characters.map(c => `
+      <label>
+        <input type="checkbox" ${!state.picked.has(c.id) ? 'checked' : ''} value="${c.id}">
+        <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
+        <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
+      </label>
+    `).join('')}
+  `;
   host.querySelectorAll('input').forEach(i => {
     i.onchange = () => {
       if (i.checked) state.picked.delete(i.value); else state.picked.add(i.value);
@@ -389,7 +393,7 @@ function renderBattle() {
 
 // Render the printable card area: title + cards for un-picked characters
 function renderPrint() {
-  document.getElementById('battle-title').textContent = state.battleName ? `⚔ ${state.battleName} ⚔` : '';
+  document.getElementById('battle-title').textContent = '';
   document.getElementById('print-area').className = `layout-${state.layout}`;
   const cards = document.getElementById('cards');
   const picked = state.characters.filter(c => !state.picked.has(c.id));
@@ -475,7 +479,6 @@ function bindIO() {
   document.getElementById('export').onclick = () => {
     const blob = new Blob([JSON.stringify({
       characters: state.characters,
-      battleName: state.battleName,
     }, null, 2)], {type: 'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -490,7 +493,6 @@ function bindIO() {
       try {
         const d = JSON.parse(r.result);
         if (Array.isArray(d.characters)) state.characters = d.characters;
-        if (typeof d.battleName === 'string') state.battleName = d.battleName;
         save(); render(); renderBattle();
       } catch { alert('Invalid JSON'); }
     };
@@ -504,9 +506,11 @@ function bindSettings() {
   const settingsOverlay = document.getElementById('settings-overlay');
   const closeSettingsBtn = document.getElementById('close-settings');
   const bardicDieSetting = document.getElementById('bardic-die-setting');
+  const layoutSetting = document.getElementById('layout-setting');
 
   settingsBtn.onclick = () => {
     bardicDieSetting.value = state.settings.bardicDie || 'd6';
+    layoutSetting.value = state.layout || '6';
     settingsOverlay.hidden = false;
   };
   closeSettingsBtn.onclick = () => { settingsOverlay.hidden = true; };
@@ -519,6 +523,11 @@ function bindSettings() {
   bardicDieSetting.onchange = () => {
     state.settings.bardicDie = bardicDieSetting.value;
     save();
+    renderPrint();
+  };
+  layoutSetting.onchange = (e) => {
+    state.layout = e.target.value;
+    document.getElementById('print-area').className = `layout-${state.layout}`;
     renderPrint();
   };
 }

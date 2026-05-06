@@ -300,6 +300,13 @@ button.danger {
   background: #fff3f3;
 }
 
+.pick-hint {
+  font-size: .9em;
+  color: #555;
+  margin: 0 0 .5rem 0;
+  grid-column: 1 / -1;
+}
+
 /* ============ PRINTABLE CARDS ============ */
 #print-area {
   padding: 1rem;
