@@ -19,9 +19,12 @@ let state = {
   load();
   buildClassOptions();
   bindForm();
-  bindBattle();
   bindIO();
   bindSettings();
+  // Auto-select all characters for printing on page load
+  state.picked.clear();
+  // Apply saved layout
+  document.getElementById('print-area').className = `layout-${state.layout}`;
   render();
   renderBattle();
   if (state.characters.length > 0 && !state.selectedId) {
@@ -116,8 +119,33 @@ function render() {
   list.querySelectorAll('li').forEach(li => {
     li.onclick = () => selectChar(li.dataset.id);
   });
-  if (state.selectedId) fillForm(state.characters.find(c => c.id === state.selectedId));
-  else document.getElementById('char-form').hidden = true;
+
+  const form = document.getElementById('char-form');
+  const emptyHint = document.getElementById('empty-hint');
+
+  // Show empty hint when no characters exist, hide form
+  if (state.characters.length === 0) {
+    emptyHint.style.display = '';
+    form.style.display = 'none';
+    return;
+  } else {
+    emptyHint.style.display = 'none';
+  }
+
+  // Hide form when no character is selected
+  if (!state.selectedId) {
+    form.style.display = 'none';
+    return;
+  }
+
+  // Show form for selected character
+  const character = state.characters.find(c => c.id === state.selectedId);
+  if (character) {
+    fillForm(character);
+  } else {
+    form.style.display = 'none';
+    state.selectedId = null;
+  }
 }
 
 // Select a character for editing
@@ -126,15 +154,22 @@ function selectChar(id) {
   render();
 }
 
+// Deselect character and hide editor form
+function deselectChar() {
+  state.selectedId = null;
+  render();
+}
+
 // Create a new blank character and select it for editing
 document.getElementById('new-char').onclick = () => {
+  const defaultClass = 'Wizard';
   const c = {
     id: crypto.randomUUID(),
-    name: '', class: 'Wizard', level: 1,
+    name: '', class: defaultClass, level: 1,
     ac: 10, hp: 8, speed: 30,
     resist: '',
     spellSaveDC: '', spellAttack: '', spellMod: '',
-    isSpellcaster: false, autoSlots: true, slots: null,
+    isSpellcaster: isSpellcaster(defaultClass), autoSlots: true, slots: null,
     resources: [],
   };
   state.characters.push(c);
@@ -156,7 +191,10 @@ function bindForm() {
     else renderManualSlots(false);
   };
 
-  classSel.onchange = () => { refreshAuto(); updateSpellFields(); };
+  classSel.onchange = () => { 
+    form.isSpellcaster.checked = isSpellcaster(classSel.value);
+    refreshAuto(); updateSpellFields(); 
+  };
   levelInput.oninput = () => { refreshAuto(); updateSpellFields(); };
   autoSlots.onchange = refreshAuto;
   form.isSpellcaster.onchange = () => { updateSpellFields(); };
@@ -165,6 +203,16 @@ function bindForm() {
   document.getElementById('add-resource').onclick = () => {
     const c = state.characters.find(x => x.id === state.selectedId);
     if (!c) return;
+    // Preserve unsaved changes from DOM inputs
+    const rows = document.querySelectorAll('#resources-list .resource-row');
+    const updatedResources = [];
+    rows.forEach(row => {
+      const name = row.querySelector('.res-name-input').value.trim();
+      const count = +row.querySelector('.res-count-input').value || 0;
+      updatedResources.push({ name, count });
+    });
+    c.resources = updatedResources;
+    // Add new empty resource
     c.resources.push({ name: '', count: 0 });
     renderResourceList();
   };
@@ -199,9 +247,7 @@ function bindForm() {
   };
 
   // Deselect character without saving
-  document.getElementById('cancel-edit').onclick = () => {
-    state.selectedId = null; render();
-  };
+  document.getElementById('cancel-edit').onclick = deselectChar;
 
   // Delete character after confirmation
   document.getElementById('delete-char').onclick = () => {
@@ -259,7 +305,7 @@ function renderResourceList() {
 function fillForm(c) {
   if (!c) return;
   const form = document.getElementById('char-form');
-  form.hidden = false;
+  form.style.display = '';
   form.name.value = c.name || '';
   form.class.value = c.class || 'Wizard';
   form.level.value = c.level || 1;
@@ -310,41 +356,35 @@ function updateSpellFields() {
   }
 }
 
-// ---------- battle tab ----------
-// Wire up battle name input and layout selector
-function bindBattle() {
-  const bn = document.getElementById('battle-name');
-  bn.value = state.battleName;
-  bn.oninput = () => { state.battleName = bn.value; save(); renderPrint(); };
-  document.getElementById('layout').onchange = (e) => {
-    state.layout = e.target.value;
-    document.getElementById('print-area').className = `layout-${state.layout}`;
-    renderPrint();
-  };
-}
-
 // Render the pick-list checkboxes for selecting which characters appear on printed cards
 function renderBattle() {
   const host = document.getElementById('pick-list');
-  host.innerHTML = state.characters.map(c => `
-    <label>
-      <input type="checkbox" checked value="${c.id}">
-      <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
-      <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
-    </label>
-  `).join('');
+  if (state.characters.length === 0) {
+    host.innerHTML = '';
+    renderPrint();
+    return;
+  }
+  host.innerHTML = `
+    <p class="pick-hint">Select characters you want to include on the print:</p>
+    ${state.characters.map(c => `
+      <label>
+        <input type="checkbox" ${!state.picked.has(c.id) ? 'checked' : ''} value="${c.id}">
+        <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
+        <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
+      </label>
+    `).join('')}
+  `;
   host.querySelectorAll('input').forEach(i => {
     i.onchange = () => {
-      if (i.checked) state.picked.add(i.value); else state.picked.delete(i.value);
+      if (i.checked) state.picked.delete(i.value); else state.picked.add(i.value);
       renderPrint();
     };
   });
   renderPrint();
 }
 
-// Render the printable card area: title + cards for un-picked characters
+// Render the printable card area: cards for un-picked characters
 function renderPrint() {
-  document.getElementById('battle-title').textContent = state.battleName ? `⚔ ${state.battleName} ⚔` : '';
   document.getElementById('print-area').className = `layout-${state.layout}`;
   const cards = document.getElementById('cards');
   const picked = state.characters.filter(c => !state.picked.has(c.id));
@@ -430,7 +470,6 @@ function bindIO() {
   document.getElementById('export').onclick = () => {
     const blob = new Blob([JSON.stringify({
       characters: state.characters,
-      battleName: state.battleName,
     }, null, 2)], {type: 'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -445,7 +484,6 @@ function bindIO() {
       try {
         const d = JSON.parse(r.result);
         if (Array.isArray(d.characters)) state.characters = d.characters;
-        if (typeof d.battleName === 'string') state.battleName = d.battleName;
         save(); render(); renderBattle();
       } catch { alert('Invalid JSON'); }
     };
@@ -459,9 +497,11 @@ function bindSettings() {
   const settingsOverlay = document.getElementById('settings-overlay');
   const closeSettingsBtn = document.getElementById('close-settings');
   const bardicDieSetting = document.getElementById('bardic-die-setting');
+  const layoutSetting = document.getElementById('layout-setting');
 
   settingsBtn.onclick = () => {
     bardicDieSetting.value = state.settings.bardicDie || 'd6';
+    layoutSetting.value = state.layout || '6';
     settingsOverlay.hidden = false;
   };
   closeSettingsBtn.onclick = () => { settingsOverlay.hidden = true; };
@@ -474,6 +514,11 @@ function bindSettings() {
   bardicDieSetting.onchange = () => {
     state.settings.bardicDie = bardicDieSetting.value;
     save();
+    renderPrint();
+  };
+  layoutSetting.onchange = (e) => {
+    state.layout = e.target.value;
+    document.getElementById('print-area').className = `layout-${state.layout}`;
     renderPrint();
   };
 }

@@ -22,8 +22,11 @@
     <button id="new-char" class="primary">+ New Character</button>
     <ul id="char-list"></ul>
   </section>
-  <form id="char-form" class="form-pane no-print" hidden>
-    <label>Name <input name="name" required></label>
+  <div id="empty-hint" class="form-pane no-print" style="display:none">
+    <p class="hint-text">← Start by adding a new character</p>
+  </div>
+  <form id="char-form" class="form-pane no-print" style="display:none">
+     <label>Name <input name="name" required></label>
     <div class="row">
       <label>Class
         <select name="class" id="class-select"></select>
@@ -62,20 +65,9 @@
     </div>
   </form>
   <section class="battle-panel">
-    <div class="battle-controls no-print">
-      <label>Battle Name <input id="battle-name" placeholder="Battle of Blackfang Pass"></label>
-      <label>Layout
-        <select id="layout">
-          <option value="6">6-up (3×2)</option>
-          <option value="4">4-up (2×2)</option>
-          <option value="2">2-up (1×2)</option>
-        </select>
-      </label>
-    </div>
     <div id="pick-list" class="pick-list no-print"></div>
 
     <div id="print-area" class="layout-6">
-      <h2 id="battle-title"></h2>
       <div id="cards"></div>
     </div>
   </section>
@@ -94,6 +86,13 @@
           <option value="d8">d8</option>
           <option value="d10">d10</option>
           <option value="d12">d12</option>
+        </select>
+      </label>
+      <label>Layout
+        <select id="layout-setting">
+          <option value="6">6-up (3×2)</option>
+          <option value="4">4-up (2×2)</option>
+          <option value="2">2-up (1×2)</option>
         </select>
       </label>
     </div>

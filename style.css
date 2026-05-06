@@ -139,6 +139,23 @@ header .io button, header .io .btn {
   font-size: .85em;
 }
 
+#empty-hint {
+  align-self: start;
+  grid-column: 2;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.hint-text {
+  font-size: 1.1em;
+  color: #666;
+  margin: 0;
+  text-align: start;
+}
+
 #manual-slots {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
@@ -281,6 +298,13 @@ button.danger {
 .pick-list label:has(input:checked) {
   border-color: #8b0000;
   background: #fff3f3;
+}
+
+.pick-hint {
+  font-size: .9em;
+  color: #555;
+  margin: 0 0 .5rem 0;
+  grid-column: 1 / -1;
 }
 
 /* ============ PRINTABLE CARDS ============ */
