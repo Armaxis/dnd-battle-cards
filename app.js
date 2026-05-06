@@ -161,13 +161,14 @@ function deselectChar() {
 
 // Create a new blank character and select it for editing
 document.getElementById('new-char').onclick = () => {
+  const defaultClass = 'Wizard';
   const c = {
     id: crypto.randomUUID(),
-    name: '', class: 'Wizard', level: 1,
+    name: '', class: defaultClass, level: 1,
     ac: 10, hp: 8, speed: 30,
     resist: '',
     spellSaveDC: '', spellAttack: '', spellMod: '',
-    isSpellcaster: false, autoSlots: true, slots: null,
+    isSpellcaster: isSpellcaster(defaultClass), autoSlots: true, slots: null,
     resources: [],
   };
   state.characters.push(c);
@@ -189,7 +190,10 @@ function bindForm() {
     else renderManualSlots(false);
   };
 
-  classSel.onchange = () => { refreshAuto(); updateSpellFields(); };
+  classSel.onchange = () => { 
+    form.isSpellcaster.checked = isSpellcaster(classSel.value);
+    refreshAuto(); updateSpellFields(); 
+  };
   levelInput.oninput = () => { refreshAuto(); updateSpellFields(); };
   autoSlots.onchange = refreshAuto;
   form.isSpellcaster.onchange = () => { updateSpellFields(); };
