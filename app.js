@@ -22,6 +22,8 @@ let state = {
   bindBattle();
   bindIO();
   bindSettings();
+  // Auto-select all characters for printing on page load
+  state.picked.clear();
   render();
   renderBattle();
   if (state.characters.length > 0 && !state.selectedId) {
@@ -357,14 +359,14 @@ function renderBattle() {
   const host = document.getElementById('pick-list');
   host.innerHTML = state.characters.map(c => `
     <label>
-      <input type="checkbox" checked value="${c.id}">
+      <input type="checkbox" ${!state.picked.has(c.id) ? 'checked' : ''} value="${c.id}">
       <span><strong>${escapeHtml(c.name || '(unnamed)')}</strong><br>
       <small>${escapeHtml(c.class || '')} ${c.level || ''}</small></span>
     </label>
   `).join('');
   host.querySelectorAll('input').forEach(i => {
     i.onchange = () => {
-      if (i.checked) state.picked.add(i.value); else state.picked.delete(i.value);
+      if (i.checked) state.picked.delete(i.value); else state.picked.add(i.value);
       renderPrint();
     };
   });
