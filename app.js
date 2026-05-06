@@ -202,6 +202,16 @@ function bindForm() {
   document.getElementById('add-resource').onclick = () => {
     const c = state.characters.find(x => x.id === state.selectedId);
     if (!c) return;
+    // Preserve unsaved changes from DOM inputs
+    const rows = document.querySelectorAll('#resources-list .resource-row');
+    const updatedResources = [];
+    rows.forEach(row => {
+      const name = row.querySelector('.res-name-input').value.trim();
+      const count = +row.querySelector('.res-count-input').value || 0;
+      updatedResources.push({ name, count });
+    });
+    c.resources = updatedResources;
+    // Add new empty resource
     c.resources.push({ name: '', count: 0 });
     renderResourceList();
   };
