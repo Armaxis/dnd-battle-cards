@@ -19,7 +19,6 @@ let state = {
   load();
   buildClassOptions();
   bindForm();
-  bindBattle();
   bindIO();
   bindSettings();
   // Auto-select all characters for printing on page load
@@ -355,13 +354,6 @@ function updateSpellFields() {
     manualSlots.hidden = true;
     form.autoSlots.checked = false;
   }
-}
-
-// ---------- battle tab ----------
-// Wire up layout selector (now in settings)
-function bindBattle() {
-  // Remove battle name references
-  // Layout is now handled in bindSettings()
 }
 
 // Render the pick-list checkboxes for selecting which characters appear on printed cards
